@@ -1,76 +1,31 @@
 ﻿using System;
+using System.Linq;
 
 class Program
 {
     static void Main()
     {
-        Console.Write("Enter the number of elements (N): ");
-        if (!int.TryParse(Console.ReadLine(), out int N) || N <= 0)
+        Console.Write("Введіть кількість елементів: ");
+        int N = int.Parse(Console.ReadLine());
+        var rand = new Random();
+        var array1 = Enumerable.Range(0, N).Select(x => rand.Next(1, 27)).Where(x => x % 2 == 0).ToArray();
+        var array2 = Enumerable.Range(0, N).Select(x => rand.Next(1, 27)).Where(x => x % 2 != 0).ToArray();
+
+        char[] ConvertToAlphabet(int[] numbers)
         {
-            Console.WriteLine("Invalid input. Please enter a positive integer.");
-            return;
+            return numbers.Select(n => n >= 1 && n <= 26 ? (char)(n + 'a' - 1) : ' ').ToArray();
         }
 
-        int[] randomNumbers = new int[N];
-        Random random = new Random();
+        char[] array1Chars = ConvertToAlphabet(array1);
+        char[] array2Chars = ConvertToAlphabet(array2);
 
-        for (int i = 0; i < N; i++)
+        string UppercaseLetters(char[] arr)
         {
-            randomNumbers[i] = random.Next(1, 27);
+            return new string(arr.Select(c => "aeidhj".Contains(c) ? char.ToUpper(c) : c).ToArray());
         }
 
-        int[] evenNumbers = Array.FindAll(randomNumbers, x => x % 2 == 0);
-        int[] oddNumbers = Array.FindAll(randomNumbers, x => x % 2 != 0);
+        Console.WriteLine(UppercaseLetters(array1Chars));
+        Console.WriteLine(UppercaseLetters(array2Chars));
 
-        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".ToCharArray();
-
-        for (int i = 0; i < evenNumbers.Length; i++)
-        {
-            evenNumbers[i] = GetAlphabetOrdinal(evenNumbers[i], true);
-        }
-
-        for (int i = 0; i < oddNumbers.Length; i++)
-        {
-            oddNumbers[i] = GetAlphabetOrdinal(oddNumbers[i], false);
-        }
-
-        Console.WriteLine("Even Array: " + string.Join(" ", evenNumbers));
-        Console.WriteLine("Odd Array: " + string.Join(" ", oddNumbers));
-
-        int countUpperCaseEven = CountUpperCaseLetters(evenNumbers);
-        int countUpperCaseOdd = CountUpperCaseLetters(oddNumbers);
-
-        Console.WriteLine($"Uppercase letters count - Even Array: {countUpperCaseEven}");
-        Console.WriteLine($"Uppercase letters count - Odd Array: {countUpperCaseOdd}");
-
-        if (countUpperCaseEven > countUpperCaseOdd)
-        {
-            Console.WriteLine("Even Array contains more uppercase letters.");
-        }
-        else if (countUpperCaseEven < countUpperCaseOdd)
-        {
-            Console.WriteLine("Odd Array contains more uppercase letters.");
-        }
-        else
-        {
-            Console.WriteLine("Both arrays contain the same number of uppercase letters.");
-        }
-    }
-
-    static int GetAlphabetOrdinal(int number, bool isUpperCase)
-    {
-        char letter = (char)(number + 96); 
-
-        if (isUpperCase && "aeidhj".Contains(letter))
-        {
-            letter = char.ToUpper(letter);
-        }
-
-        return (int)letter;
-    }
-
-    static int CountUpperCaseLetters(int[] array)
-    {
-        return Array.FindAll(array, x => x >= 'A' && x <= 'Z' || x >= 'a' && x <= 'z' && char.IsUpper((char)(x + 96))).Length;
     }
 }
